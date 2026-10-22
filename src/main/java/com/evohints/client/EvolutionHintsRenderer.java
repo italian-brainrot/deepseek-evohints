@@ -15,11 +15,13 @@ import com.cobblemon.mod.common.util.math.QuaternionUtilsKt;
 import com.evohints.EvolutionHints;
 import com.evohints.mixin.StorageWidgetAccessor;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import org.joml.Quaternionf;
@@ -61,7 +63,6 @@ public final class EvolutionHintsRenderer {
         pose.pushPose();
         // Cobblemon draws slot overlays at z 500; stay above them.
         pose.translate(0.0D, 0.0D, 550.0D);
-        context.fill(x, y, x + 9, y + 9, 0x66000000);
         // The texture is 16x16; sample all of it and scale it into the 9x9 badge.
         // The shorter overload treats width/height as both the screen size and the
         // sampled region, which cropped the icon to its top-left quarter.
@@ -79,6 +80,12 @@ public final class EvolutionHintsRenderer {
             return;
         }
 
+        // Another mod (for example Chiselmon) owns the tooltip for this slot.
+        // ScreenMixin appends our summary to that deferred tooltip instead.
+        if (hovered.getTooltip() != null) {
+            return;
+        }
+
         Pokemon pokemon = hovered.getPokemon();
         if (pokemon == null) {
             return;
@@ -90,6 +97,69 @@ public final class EvolutionHintsRenderer {
         }
 
         drawTooltip(context, hints, mouseX, mouseY);
+    }
+
+    /**
+     * Called after the screen has queued its deferred tooltip (Chiselmon and
+     * other widget tooltips use this path). If the hovered PC slot has one of
+     * those tooltips, append a compact evolution summary so the two features
+     * share a single panel instead of drawing over each other.
+     */
+    public static List<FormattedCharSequence> augmentDeferredTooltip(
+            PCGUI gui,
+            Font font,
+            List<FormattedCharSequence> lines,
+            int mouseX,
+            int mouseY
+    ) {
+        if (!Screen.hasShiftDown()) {
+            return lines;
+        }
+
+        StorageSlot hovered = findHoveredSlot(gui, mouseX, mouseY);
+        if (hovered == null || hovered.getTooltip() == null) {
+            return lines;
+        }
+
+        Pokemon pokemon = hovered.getPokemon();
+        if (pokemon == null) {
+            return lines;
+        }
+
+        List<EvolutionHint> hints = EvolutionHintsResolver.resolve(pokemon);
+        if (hints.isEmpty()) {
+            return lines;
+        }
+
+        List<FormattedCharSequence> augmented = new ArrayList<>(lines.size() + hints.size() + 3);
+        augmented.addAll(lines);
+        augmented.add(FormattedCharSequence.EMPTY);
+        augmented.addAll(font.split(
+                Component.translatable("evohints.tooltip.title").withStyle(ChatFormatting.GREEN),
+                TEXT_WIDTH
+        ));
+
+        for (EvolutionHint hint : hints) {
+            Species target = hint.targetSpecies();
+            Component targetName = EvolutionHintsResolver.isKnown(target) && target != null
+                    ? target.getTranslatedName()
+                    : Component.translatable("evohints.unknown_target");
+
+            MutableComponent line = Component.literal("  ").append(targetName);
+            if (!hint.requirements().isEmpty()) {
+                line.append(Component.literal(": "));
+                List<Component> requirements = hint.requirements();
+                for (int index = 0; index < requirements.size(); index++) {
+                    if (index > 0) {
+                        line.append(Component.literal(", "));
+                    }
+                    line.append(requirements.get(index));
+                }
+            }
+            augmented.addAll(font.split(line, TEXT_WIDTH));
+        }
+
+        return augmented;
     }
 
     private static StorageSlot findHoveredSlot(PCGUI gui, int mouseX, int mouseY) {

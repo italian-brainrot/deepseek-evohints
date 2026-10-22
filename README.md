@@ -14,6 +14,8 @@ target only after that species has been encountered in the Pokédex.
 - Level and friendship evolutions are described without their exact numbers.
 - Item, trade, location, and other requirements use Cobblemon's own requirement
   descriptions, so addon-defined evolutions keep working.
+- Compatible with Chiselmon's shift tooltip: the evolution summary is appended to
+  Chiselmon's tooltip instead of opening a second, overlapping panel.
 - The target's name and 3D preview are replaced with `???` / `?` until the
   species is registered in the Pokédex.
 
