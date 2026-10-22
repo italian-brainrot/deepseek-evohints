@@ -1,25 +1,39 @@
+# Evolution Hints
 
-Installation information
-=======
+A small client-side Cobblemon addon for Minecraft 1.21.1 / NeoForge.
 
-This template repository can be directly cloned to get you started with a new
-mod. Simply create a new repository cloned from this one, by following the
-instructions provided by [GitHub](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
+Evolution Hints adds a green evolution marker to Pokémon stored in Cobblemon's
+PC while Shift is held. Hovering a marked Pokémon explains how it evolves
+without revealing level or friendship thresholds, and previews the evolution
+target only after that species has been encountered in the Pokédex.
 
-Once you have your clone, simply open the repository in the IDE of your choice. The usual recommendation for an IDE is either IntelliJ IDEA or Eclipse.
+## Features
 
-If at any point you are missing libraries in your IDE, or you've run into problems you can
-run `gradlew --refresh-dependencies` to refresh the local cache. `gradlew clean` to reset everything 
-{this does not affect your code} and then start the process again.
+- Hold Shift in the PC to reveal evolution markers on party and box slots.
+- Tooltip with one row per evolution path, shown while Shift is held.
+- Level and friendship evolutions are described without their exact numbers.
+- Item, trade, location, and other requirements use Cobblemon's own requirement
+  descriptions, so addon-defined evolutions keep working.
+- The target's name and 3D preview are replaced with `???` / `?` until the
+  species is registered in the Pokédex.
 
-Mapping Names:
-============
-By default, the MDK is configured to use the official mapping names from Mojang for methods and fields 
-in the Minecraft codebase. These names are covered by a specific license. All modders should be aware of this
-license. For the latest license text, refer to the mapping file itself, or the reference copy here:
-https://github.com/NeoForged/NeoForm/blob/main/Mojang.md
+## Requirements
 
-Additional Resources: 
-==========
-Community Documentation: https://docs.neoforged.net/  
-NeoForged Discord: https://discord.neoforged.net/
+- Minecraft 1.21.1
+- NeoForge 21.1.262 or newer
+- Cobblemon 1.8.2 or newer
+- Kotlin for Forge is supplied by Cobblemon at runtime
+
+## Building
+
+```bash
+./gradlew build
+```
+
+The mod jar is written to `build/libs/evohints-1.0.0.jar`.
+
+## Installing
+
+Drop the jar into the `mods` folder alongside Cobblemon and Kotlin for Forge.
+The mod is client-side only; it can be installed on a client connecting to a
+server that does not have it.

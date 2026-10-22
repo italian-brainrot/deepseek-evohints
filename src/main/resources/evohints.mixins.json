@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.evohints.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "PCGUIMixin",
+    "StorageSlotMixin",
+    "StorageWidgetAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

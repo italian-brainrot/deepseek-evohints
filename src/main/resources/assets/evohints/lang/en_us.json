@@ -1,0 +1,10 @@
+{
+  "evohints.tooltip.title": "Evolution Hints",
+  "evohints.requirement.level": "Evolves with level",
+  "evohints.requirement.friendship": "Evolves with friendship",
+  "evohints.requirement.block": "Interact with %s",
+  "evohints.requirement.block_tag": "Interact with blocks in %s",
+  "evohints.requirement.custom": "Requirement: %s",
+  "evohints.requirement.unknown": "Evolution method unknown",
+  "evohints.unknown_target": "???"
+}

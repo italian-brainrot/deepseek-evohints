@@ -27,7 +27,14 @@ sourceSets.main.resources {
 }
 
 repositories {
-    // Add here additional repositories if required by some of the dependencies below.
+    maven {
+        name = 'ImpactDev'
+        url = 'https://maven.impactdev.net/repository/development/'
+    }
+    maven {
+        name = 'KotlinForForge'
+        url = 'https://thedarkcolour.github.io/KotlinForForge/'
+    }
 }
 
 base {
@@ -116,6 +123,14 @@ configurations {
 }
 
 dependencies {
+    // Cobblemon's PC, Pokédex and evolution APIs. This is a required mod dependency.
+    implementation "com.cobblemon:neoforge:${cobblemon_version}"
+
+    // Cobblemon is written in Kotlin and uses Kotlin for Forge as its language loader.
+    // It is present at runtime whenever Cobblemon is installed; adding it here also
+    // makes the development client usable.
+    implementation "thedarkcolour:kotlinforforge-neoforge:${kotlinforforge_version}"
+
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"
@@ -151,6 +166,7 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             mod_name               : mod_name,
             mod_license            : mod_license,
             mod_version            : mod_version,
+            cobblemon_version_range: cobblemon_version_range,
     ]
     inputs.properties replaceProperties
     expand replaceProperties
